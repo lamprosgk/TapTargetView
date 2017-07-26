@@ -267,36 +267,7 @@ public class TapTargetView extends View {
         public void onUpdate(float lerpTime) {
           expandContractUpdateListener.onUpdate(lerpTime);
         }
-      })
-      .onEnd(new FloatValueAnimatorBuilder.EndListener() {
-        @Override
-        public void onEnd() {
-          pulseAnimation.start();
-        }
-      })
-      .build();
-
-  final ValueAnimator pulseAnimation = new FloatValueAnimatorBuilder()
-      .duration(1000)
-      .repeat(ValueAnimator.INFINITE)
-      .interpolator(new AccelerateDecelerateInterpolator())
-      .onUpdate(new FloatValueAnimatorBuilder.UpdateListener() {
-        @Override
-        public void onUpdate(float lerpTime) {
-          final float pulseLerp = delayedLerp(lerpTime, 0.5f);
-          targetCirclePulseRadius = (1.0f + pulseLerp) * TARGET_RADIUS;
-          targetCirclePulseAlpha = (int) ((1.0f - pulseLerp) * 255);
-          targetCircleRadius = TARGET_RADIUS + halfwayLerp(lerpTime) * TARGET_PULSE_RADIUS;
-
-          if (outerCircleRadius != calculatedOuterCircleRadius) {
-            outerCircleRadius = calculatedOuterCircleRadius;
-          }
-
-          calculateDrawingBounds();
-          invalidateViewAndOutline(drawingBounds);
-        }
-      })
-      .build();
+      }).build();
 
   final ValueAnimator dismissAnimation = new FloatValueAnimatorBuilder(true)
       .duration(250)
@@ -346,7 +317,7 @@ public class TapTargetView extends View {
       .build();
 
   private ValueAnimator[] animators = new ValueAnimator[]
-      {expandAnimation, pulseAnimation, dismissConfirmAnimation, dismissAnimation};
+      {expandAnimation, dismissConfirmAnimation, dismissAnimation};
 
   private final ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
 
@@ -732,7 +703,6 @@ public class TapTargetView extends View {
    *                     (results in different dismiss animations)
    */
   public void dismiss(boolean tappedTarget) {
-    pulseAnimation.cancel();
     expandAnimation.cancel();
     if (tappedTarget) {
       dismissConfirmAnimation.start();
